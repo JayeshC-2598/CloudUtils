@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Update package lists
+sudo apt-get update -y
+
+# Check if Apache is already installed
+if ! dpkg -l | grep -q apache2; then
+    echo "Installing Apache..."
+    sudo apt-get install apache2 -y
+else
+    echo "Apache is already installed."
+fi
+
+# Start and enable Apache service
+sudo systemctl start apache2
+sudo systemctl enable apache2
+
+# Replace the default index.html with "Hello" wrapped in <h1> tags
+sudo bash -c 'echo "<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+</head>
+<body>
+    <h1>Hello</h1>
+</body>
+</html>" > /var/www/html/index.html'
+
+# Ensure correct permissions on the web root
+sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 755 /var/www/html
+
+echo "Apache server is running and index.html has been updated."
